@@ -1,0 +1,3 @@
+#  node_modules
+#  Keep enviroment variables ot of version control
+#  .env
