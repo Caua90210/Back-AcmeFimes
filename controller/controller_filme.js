@@ -21,7 +21,7 @@ const setInserirNovoFilme = async function(dadosFilme) {
         dadosFilme.sinopse == ''            || dadosFilme.sinopse == undefined              || dadosFilme.sinopse.length > 65000        ||
         dadosFilme.duracao == ''            || dadosFilmes.duracao == undefined             || dadosFilme.duracao.length > 8            ||
         dadosFilme.data_lancamento == ''    || dadosFilme.data_lancamento == undefined      || dadosFilme.data_lancamento.length != 10  ||
-        dadosFilme.foto_capa == ''          || dadosFilme.foto_capa == undefined            || dadosFilme.foto_capa.length > 200   ||                         ||
+        dadosFilme.foto_capa == ''          || dadosFilme.foto_capa == undefined            || dadosFilme.foto_capa.length > 200   ||                      
         dadosFilme.valor_unitario.length > 6
      ) {
         
