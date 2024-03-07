@@ -15,41 +15,70 @@ const setInserirNovoFilme = async function(dadosFilme) {
     //Cria objeto JSON para devolver os dados criados na requisição
     let novoFilmeJSON = {}
     
+
+    
     //Validação de campos obrigatórios ou com digitação inválida.
     if (
-        dadosFilme.nome == ''               || dadosFilme.nome == undefined                 || dadosFilme.nome.length > 80              ||
-        dadosFilme.sinopse == ''            || dadosFilme.sinopse == undefined              || dadosFilme.sinopse.length > 65000        ||
-        dadosFilme.duracao == ''            || dadosFilmes.duracao == undefined             || dadosFilme.duracao.length > 8            ||
-        dadosFilme.data_lancamento == ''    || dadosFilme.data_lancamento == undefined      || dadosFilme.data_lancamento.length != 10  ||
-        dadosFilme.foto_capa == ''          || dadosFilme.foto_capa == undefined            || dadosFilme.foto_capa.length > 200   ||                      
+        dadosFilme.nome == ''               || dadosFilme.nome == undefined             ||   dadosFilme.nome == null                      || dadosFilme.nome.length > 80              ||
+        dadosFilme.sinopse == ''            || dadosFilme.sinopse == undefined          ||   dadosFilme.sinopse == null                   || dadosFilme.sinopse.length > 65000        ||
+        dadosFilme.duracao == ''            || dadosFilme.duracao == undefined         ||   dadosFilme.duracao == null                  || dadosFilme.duracao.length > 8            ||
+        dadosFilme.data_lancamento == ''    || dadosFilme.data_lancamento == undefined  ||   dadosFilme.data_lancamento == null           || dadosFilme.data_lancamento.length != 10  ||
+        dadosFilme.foto_capa == ''          || dadosFilme.foto_capa == undefined        ||   dadosFilme.foto_capa == null                 || dadosFilme.foto_capa.length > 200        ||                      
         dadosFilme.valor_unitario.length > 6
      ) {
         
         //Retorna o status code 400.
-        return message.ERROR_REQUIRED_FIELDS
+        return ERROR_Messages.ERROR_REQUIRED_FIELDS
 
     }else{
-        
-        //encaminha os dados do filme para o DAO inserir o banco de dados.
+
+        let validateStatus = false
+
+
+        //Validação da data de relancaento, já que ela não é obrigatória no banco de dados
+        if (
+            dadosFilme.data_relancamento != null &&
+            dadosFilme.data_relancamento != ''   &&
+            dadosFilme.data_relancamento != undefined
+            
+            ) {
+                //validação para verificar se a data está com a quantidade de digitos corretos
+            if (dadosFilme.data_relancamento.length != 10) {
+                return message.ERROR_REQUIRED_FIELDS //400
+            } else {
+                validateStatus = true
+            }
+        } else {
+            validateStatus = true
+            
+        }
+
+        if (validateStatus) {
+                    //encaminha os dados do filme para o DAO inserir o banco de dados.
         let novoFilme = await filmesDAO.insertFilme(dadosFilme)
 
         //Validação para verificar se o DAO inseriu os dados do BD
         if (novoFilme) {
 
+            let id = await filmesDAO.lastIdFilme()
+
+            dadosFilme.id = id[0].id
             //Cria o JSON de retorno dos dados (201)
             novoFilmeJSON.filme = dadosFilme
-            novoFilmeJSON.status = message.SUCCES_CREATED_ITEM.status
-            novoFilmeJSON.status_code = message.SUCCES_CREATED_ITEM.status_code
-            novoFilmeJSON.message = message.SUCCES_CREATED_ITEM.message
+            novoFilmeJSON.status = ERROR_Messages.SUCCESS_CREATED_ITEM.status
+            novoFilmeJSON.status_code = ERROR_Messages.SUCCESS_CREATED_ITEM.status_code
+            novoFilmeJSON.message = ERROR_Messages.SUCCESS_CREATED_ITEM.message
 
             return  novoFilmeJSON  //201
 
         } else {
 
             //Erro no servidor de DB
-            return message.ERROR_INTERNAL_SERVER_DB //500
+            return ERROR_Messages.ERROR_INTERNAL_SERVER_DB //500
 
         }
+        }
+
 
     }
 }
