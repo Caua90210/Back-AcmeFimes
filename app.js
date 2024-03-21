@@ -89,5 +89,32 @@ app.post('/v2/acmefilmes/filme', cors(), bodyParserJSON, async function(request,
        response.json(resultDadosNovoFilme)
 })
 
+app.put('/v2/acmefilmes/filme/:id', cors(),bodyParserJSON, async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id
+
+    // Recebe o Content-Type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    // Recebe os dados encaminhados na requisição do body (JSON)
+    let dadosBody = request.body
+    
+    let resultDados = await controllerFilmes.setAtualizarFilme(dadosBody, contentType, idFilme)
+    
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+app.delete('/V2/acmefilmes/filme/:id', cors(), async function (request,response) {
+    let idFilme = request.params.id
+
+    let resultDados = await controllerFilmes.setExcluirFilme(idFilme)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
 console.log("API funcionando na porta 8080")
 app.listen(8080, () => {})
